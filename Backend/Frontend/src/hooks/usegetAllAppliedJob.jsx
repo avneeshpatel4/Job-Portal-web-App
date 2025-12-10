@@ -4,7 +4,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-const useGetAppliedJobs = () => {
+const useGetAppliedJob = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     const fetchAppliedJobs = async () => {
@@ -25,4 +25,4 @@ const useGetAppliedJobs = () => {
   return null;
 };
 
-export default useGetAppliedJobs;
+export default useGetAppliedJob;
