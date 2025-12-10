@@ -8,10 +8,17 @@ import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
 import applicationRoute from "./routes/application.route.js";
 import path from "path";
-const app = express();
-dotenv.config({})
+import { fileURLToPath } from "url";
 
-//middleeware
+dotenv.config();
+
+const app = express();
+
+// Fix ES module dirname issue
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -20,22 +27,24 @@ const corsOption = {
   origin: ["http://localhost:5173"],
   credentials: true,
 };
-app.use(cors(corsOption))
+app.use(cors(corsOption));
 
 const PORT = process.env.PORT || 5001;
 
-// API
-app.use("/api/user", userRoute)
+// API routes
+app.use("/api/user", userRoute);
 app.use("/api/company", companyRoute);
 app.use("/api/job", jobRoute);
-app.use("/api/application", applicationRoute)
+app.use("/api/application", applicationRoute);
 
-if (process.env.NODE_ENV==="production"){
-const dispatch = path.resolve();
-app.use(express.static(path.join("./Frontend/dist")));
-app.get("*",(req,res)=>{
-  res.sendFile(path.resolve(dirpath,'./Frontend/dist','index.html'))
-})
+// ---- PRODUCTION BUILD SERVE ----
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "Frontend", "dist")));
+
+  // FIX: Express v5 does NOT support "*" → use regex /.*/
+  app.get(/.*/, (req, res) => {
+    res.sendFile(path.join(__dirname, "Frontend", "dist", "index.html"));
+  });
 }
 
 app.listen(PORT, () => {
