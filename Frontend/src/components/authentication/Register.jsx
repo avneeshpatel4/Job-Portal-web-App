@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components_lite/Navbar";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { RadioGroup } from "../ui/radio-group";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { USER_API_ENDPOINT } from "../../../utils/data";
+import { USER_API_ENDPOINT } from "../../utils/data";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setloading } from "@/redux/authSlice";
@@ -22,7 +22,8 @@ function Register() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading } = useSelector((store) => store.auth);
+  const { loading,user } = useSelector((store) => store.auth);
+
 
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -61,9 +62,14 @@ function Register() {
       dispatch(setloading(false));
     }
   };
+   useEffect(()=>{
+      if (user){
+        navigate("/")
+      }
+    },[])
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 bg-white">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 bg-gray-300">
       {/* <Navbar /> */}
 
       <div className="w-full max-w-3xl text-center mt-10">
@@ -74,7 +80,7 @@ function Register() {
 
       <form
         onSubmit={submitHandler}
-        className="w-full sm:w-[90%] md:w-2/3 lg:w-1/2 border border-gray-300 rounded-lg p-5 sm:p-6 md:p-8 my-4 shadow-sm bg-white"
+        className="w-full sm:w-[90%] md:w-2/3 lg:w-1/2 border border-gray-800 rounded-lg p-5 sm:p-6 md:p-8 my-4 shadow-sm bg-gray-100"
       >
         <h1 className="font-bold text-xl sm:text-2xl text-center text-blue-600">
           Register
@@ -89,6 +95,8 @@ function Register() {
             value={input.fullname}
             onChange={changeEventHandler}
             placeholder="Enter your full name"
+              className="border border-gray-500"
+
           />
         </div>
 
@@ -101,6 +109,8 @@ function Register() {
             value={input.email}
             onChange={changeEventHandler}
             placeholder="Enter your email"
+              className="border border-gray-500"
+
           />
         </div>
 
@@ -113,6 +123,8 @@ function Register() {
             value={input.password}
             onChange={changeEventHandler}
             placeholder="Enter your password"
+              className="border border-gray-500"
+
           />
         </div>
 
@@ -125,6 +137,8 @@ function Register() {
             value={input.phoneNumber}
             onChange={changeEventHandler}
             placeholder="Enter your phone number"
+              className="border border-gray-500"
+
           />
         </div>
 
@@ -140,6 +154,7 @@ function Register() {
                 checked={input.role === "Student"}
                 onChange={changeEventHandler}
                 className="cursor-pointer"
+                
               />
               Student
             </label>
@@ -164,7 +179,7 @@ function Register() {
             type="file"
             accept="image/*"
             onChange={changeFileHandler}
-            className="cursor-pointer"
+            className="cursor-pointer border border-gray-400"
           />
         </div>
 

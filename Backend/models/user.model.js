@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+   
     role: {
       type: String,
       enum: ["Student", "Recruiter"],
@@ -44,7 +45,7 @@ const userSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Company",
       },
-      ProfilePhoto: {
+      profilePhoto: {
         type: String,
         default: "",
       },

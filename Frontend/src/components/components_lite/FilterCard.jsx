@@ -1,19 +1,42 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { ChevronDown, Filter as FilterIcon } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { setSearchedQuery } from "@/redux/jobSlice";
 
 const filterData = [
   {
     filterType: "Location",
-    array: ["Delhi", "Mumbai", "Pune", "Bangalore", "Hyderabad", "Remote"],
+    array: [
+      "Delhi",
+      "Mumbai",
+      "Kolhapur",
+      "Pune",
+      "Bangalore",
+      "Hyderabad",
+      "Chennai",
+      "Remote",
+    ],
   },
   {
     filterType: "Technology",
-    array: ["React", "Node", "Python", "Java", "MERN", "Fullstack"],
+    array: [
+      "Mern",
+      "React",
+      "Data Scientist",
+      "Fullstack",
+      "Node",
+      "Python",
+      "Java",
+      "frontend",
+      "backend",
+      "mobile",
+      "desktop",
+    ],
   },
   {
     filterType: "Experience",
-    array: ["0-2 years", "2-5 years", "5-8 years", "8+ years"],
+    array: ["0-3 years", "3-5 years", "5-7 years", "7+ years"],
   },
   {
     filterType: "Salary",
@@ -26,18 +49,25 @@ const Filter = () => {
   const [openSection, setOpenSection] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
 
+  const dispatch = useDispatch();
   const handleToggle = (index) => {
     setOpenSection(openSection === index ? null : index);
   };
 
+  useEffect(() => {
+    dispatch(setSearchedQuery(selectedValue));
+  }, [selectedValue]);
+
   return (
     <div className="w-full bg-gray-200 hover:bg-gray-300 rounded-xl shadow-md border border-gray-100 p-4 sm:p-5">
-      {/* Header (Mobile Toggle Button) */}
+      {/* Header */}
       <div className="flex justify-between items-center mb-4 sm:mb-5">
         <h1 className="font-bold text-lg sm:text-xl flex items-center gap-2">
           <FilterIcon className="w-5 h-5 text-[#7209b7]" />
           Filter Jobs
         </h1>
+
+        {/* Mobile Toggle */}
         <button
           className="block md:hidden text-sm font-medium text-[#7209b7] border border-[#7209b7] rounded-md px-3 py-1"
           onClick={() => setShowFilters(!showFilters)}

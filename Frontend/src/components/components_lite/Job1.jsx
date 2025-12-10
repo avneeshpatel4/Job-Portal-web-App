@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
@@ -7,24 +7,7 @@ import { Bookmark } from "lucide-react";
 
 const Job1 = ({ job }) => {
   const navigate = useNavigate();
-const jobId = "123qwe123";
-  // ✅ Dummy data fallback
-  const dummyJob = {
-    _id: "123",
-    createdAt: new Date(),
-    title: "Frontend Developer",
-    description:
-      "Join our dynamic team to build interactive UIs using React.js and Tailwind CSS.",
-    position: "2",
-    jobType: "Full-Time",
-    salary: "8",
-    company: {
-      name: "TechNova Solutions",
-      logo: "https://cdn-icons-png.flaticon.com/512/5968/5968350.png",
-    },
-  };
-
-  const data = job || dummyJob;
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   const daysAgoFunction = (mongodbTime) => {
     const createdAt = new Date(mongodbTime);
@@ -38,17 +21,25 @@ const jobId = "123qwe123";
       {/* Top Section */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-800">
-          {daysAgoFunction(data?.createdAt) === 0
+          {daysAgoFunction(job?.createdAt) === 0
             ? "Today"
-            : `${daysAgoFunction(data?.createdAt)} days ago`}
+            : `${daysAgoFunction(job?.createdAt)} days ago`}
         </p>
+
+        {/* Bookmark Button */}
         <Button
           variant="outline"
-          className="rounded-full bg-gray-50"
           size="icon"
-          aria-label="Bookmark job"
+          onClick={() => setIsBookmarked(!isBookmarked)}
+          className={`rounded-full transition-all duration-200 
+            ${isBookmarked ? "bg-yellow-300 border-yellow-600 shadow-md" : "bg-gray-50 border-gray-500"}
+          `}
         >
-          <Bookmark className="text-gray-600" />
+          <Bookmark
+            className={`transition-all 
+              ${isBookmarked ? "text-yellow-800 fill-yellow-800" : "text-gray-600"}
+            `}
+          />
         </Button>
       </div>
 
@@ -57,12 +48,12 @@ const jobId = "123qwe123";
         <div className="flex items-center gap-3">
           <Button className="p-6" variant="outline" size="icon">
             <Avatar>
-              <AvatarImage src={data?.company?.logo} alt="Company Logo" />
+              <AvatarImage src={job?.company?.logo} alt="Company Logo" />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </Button>
           <div>
-            <h1 className="font-semibold text-lg">{data?.company?.name}</h1>
+            <h1 className="font-semibold text-lg">{job?.company?.name}</h1>
             <p className="text-sm text-gray-500">India</p>
           </div>
         </div>
@@ -70,31 +61,31 @@ const jobId = "123qwe123";
 
       {/* Job Info */}
       <div>
-        <h1 className="font-bold text-xl my-2 text-gray-800">{data?.title}</h1>
+        <h1 className="font-bold text-xl my-2 text-gray-800">{job?.title}</h1>
         <p className="text-sm text-gray-600 leading-relaxed">
-          {data?.description}
+          {job?.description}
         </p>
       </div>
 
       {/* Badges */}
       <div className="flex flex-wrap items-center gap-2 mt-4">
         <Badge className="text-blue-700 font-semibold" variant="ghost">
-          {data?.position} Positions
+          {job?.position} Positions
         </Badge>
         <Badge className="text-[#F83002] font-semibold" variant="ghost">
-          {data?.jobType}
+          {job?.jobType}
         </Badge>
         <Badge className="text-[#7209b7] font-semibold" variant="ghost">
-          {data?.salary} LPA
+          {job?.salary} LPA
         </Badge>
       </div>
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-5">
         <Button
-          onClick={() => navigate(`/description/${jobId}`)}
+          onClick={() => navigate(`/description/${job?._id}`)}
           variant="outline"
-          className="w-full sm:w-auto"
+          className="w-full sm:w-auto bg-gray-100 border border-gray-700 font-semibold"
         >
           Details
         </Button>

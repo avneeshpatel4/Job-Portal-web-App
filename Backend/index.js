@@ -7,6 +7,7 @@ import userRoute from "./routes/user.routes.js";
 import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
 import applicationRoute from "./routes/application.route.js";
+import path from "path";
 const app = express();
 dotenv.config({})
 
@@ -28,6 +29,14 @@ app.use("/api/user", userRoute)
 app.use("/api/company", companyRoute);
 app.use("/api/job", jobRoute);
 app.use("/api/application", applicationRoute)
+
+if (process.env.NODE_ENV==="production"){
+const dispatch = path.resolve();
+app.use(express.static(path.join("./Frontend/dist")));
+app.get("*",(req,res)=>{
+  res.sendFile(path.resolve(dirpath,'./Frontend/dist','index.html'))
+})
+}
 
 app.listen(PORT, () => {
   connectDB();

@@ -6,9 +6,9 @@ import cloudinary from "../utils/cloud.js";
 
 export const register = async (req, res) => {
   try {
-    const { fullname, email, phoneNumber, password, adharcard, pancard, role } = req.body;
-    console.log(fullname, email, phoneNumber, password,role);
-    
+    const { fullname, email, phoneNumber, password, adharcard, pancard, role } =
+      req.body;
+    console.log(fullname, email, phoneNumber, password, role);
 
     if (!fullname || !email || !phoneNumber || !password || !role) {
       return res.status(400).json({
@@ -25,14 +25,13 @@ export const register = async (req, res) => {
       });
     }
 
-        const phoneNum = await User.findOne({ phoneNumber });
+    const phoneNum = await User.findOne({ phoneNumber });
     if (phoneNum) {
       return res.status(400).json({
         message: "PhoneNumber already exists",
         success: false,
       });
     }
-
 
     // const existingAdharcard = await User.findOne({ adharcard });
     // if (existingAdharcard) {
@@ -50,16 +49,16 @@ export const register = async (req, res) => {
     //   });
     // }
 
-    // const file = req.file;
-    // if (!file) {
-    //   return res.status(400).json({
-    //     message: "Profile image is required",
-    //     success: false,
-    //   });
-    // }
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({
+        message: "Profile image is required",
+        success: false,
+      });
+    }
 
-    // const fileUri = getDataUri(file);
-    // const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+    const fileUri = getDataUri(file);
+    const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -71,9 +70,9 @@ export const register = async (req, res) => {
       // pancard,
       password: hashedPassword,
       role,
-      // profile: {
-      //   profilePhoto: cloudResponse.secure_url,
-      // },
+      profile: {
+        profilePhoto: cloudResponse.secure_url,
+      },
     });
 
     await newUser.save();
@@ -184,6 +183,7 @@ export const updateProfile = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, bio, skills } = req.body;
     const file = req.file;
+    console.log(fullname, email, phoneNumber, bio, skills);
 
     const userId = req.id; // Assuming authentication middleware sets req.id
     const user = await User.findById(userId);
@@ -232,88 +232,6 @@ export const updateProfile = async (req, res) => {
     });
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import { User } from "../models/user.model.js";
 // import bcrypt from "bcryptjs";

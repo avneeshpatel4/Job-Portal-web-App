@@ -6,12 +6,13 @@ import {
   registerCompany,
   updateCompany,
 } from "../controllers/company.controller.js";
+import { singleUpload } from "../middleware/multer.js"
 
 const router = express.Router();
 
 router.route("/register").post(authenticatedToken, registerCompany);
 router.route("/get").get(authenticatedToken, getAllCompanies);
 router.route("/get/:id").get(authenticatedToken, getCompanyById);
-router.route("/update/:id").put(authenticatedToken, updateCompany);
+router.route("/update/:id").put(authenticatedToken,singleUpload ,updateCompany);
 
 export default router;

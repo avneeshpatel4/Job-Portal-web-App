@@ -1,11 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import FilterCard from "./FilterCard";
 import Job1 from "./Job1";
+import { useSelector } from "react-redux";
+import { motion } from "framer-motion";
 
-const jobsArray = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const Jobs = () => {
+  const { allJobs, searchedQuery } = useSelector((store) => store.jobs);
+  const [filterJobs, setFilterJobs] = useState(allJobs);
 
-function Jobs() {
+  useEffect(() => {
+    if (!searchedQuery || searchedQuery.trim() === "") {
+      setFilterJobs(allJobs);
+      return;
+    }
+
+    const query = searchedQuery.toLowerCase();
+
+    const filteredJobs = allJobs.filter((job) => {
+      return (
+        job.title?.toLowerCase().includes(query) ||
+        job.description?.toLowerCase().includes(query) ||
+        job.location?.toLowerCase().includes(query) ||
+        job.experience?.toLowerCase().includes(query) ||
+        job.salary?.toLowerCase().includes(query)
+      );
+    });
+
+    setFilterJobs(filteredJobs);
+  }, [allJobs, searchedQuery]);
+
   return (
     <div className="bg-gray-50 min-h-screen">
       <Navbar />
@@ -18,7 +42,7 @@ function Jobs() {
           </div>
 
           {/* Job Cards Section */}
-          {jobsArray.length <= 0 ? (
+          {filterJobs.length <= 0 ? (
             <span className="text-gray-600 text-lg font-medium">
               Job Not Found 😔
             </span>
@@ -34,8 +58,16 @@ function Jobs() {
                   gap-6
                 "
               >
-                {jobsArray.map((job, index) => (
-                  <Job1 key={index} />
+                {filterJobs.map((job) => (
+                  <motion.div
+                    key={job.id}
+                    initial={{ opacity: 0, x: 100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -100 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <Job1 job={job} />
+                  </motion.div>
                 ))}
               </div>
             </div>
@@ -44,6 +76,6 @@ function Jobs() {
       </div>
     </div>
   );
-}
+};
 
 export default Jobs;

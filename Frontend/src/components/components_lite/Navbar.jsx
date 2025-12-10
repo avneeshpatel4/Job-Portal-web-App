@@ -3,110 +3,159 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { User2, LogOut, Menu } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
+import { USER_API_ENDPOINT } from "../../utils/data";
+import axios from "axios";
+import { setUser } from "@/redux/authSlice";
 
 function Navbar() {
   const { user } = useSelector((store) => store.auth);
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const logoutHandler = async () => {
+    try {
+      const response = await axios.post(`${USER_API_ENDPOINT}/logout`, {
+        withCredentials: true,
+      });
+      if (response.data.success) {
+        dispatch(setUser(null));
+        navigate("/");
+        toast.success("Logged out successfully");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Logout failed");
+    }
+  };
 
   return (
-    <nav className="bg-gray-300 hover:bg-gray-300 shadow-sm p-3">
+    <nav className="bg-gray-300 shadow-sm p-3">
       <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-1">
-          <h1 className="text-2xl font-bold text-[#FA4F09]">
-            Job <span className="text-[#6A38C2]">Portal</span>
-          </h1>
-        </Link>
+        <h1
+          className="text-2xl font-bold cursor-pointer"
+          onClick={() => navigate("/")}
+        >
+          Job <span className="text-[#6A38C2]">Portal</span>
+        </h1>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-8">
           <ul className="flex font-medium items-center gap-4 text-gray-700">
-            <li>
-              <Link to={"/"}>
-                <Button
-                  variant="ghost"
-                  className="bg-gray-400 hover:bg-gray-500 text-gray-800 font-medium"
-                >
-                  Home
-                </Button>
-              </Link>
-            </li>
-            <Link to={"/Browse"}>
-              <li>
-                <Button
-                  variant="ghost"
-                  className="bg-gray-400 hover:bg-gray-500 text-gray-800 font-medium"
-                >
-                  Browse
-                </Button>
-              </li>
-            </Link>
-            <li>
-              <Link to="/Jobs">
-                <Button
-                  variant="ghost"
-                  className="bg-gray-400 hover:bg-gray-500 text-gray-800 font-medium"
-                >
-                  Jobs
-                </Button>
-              </Link>
-            </li>
+            {user && user.role === "Recruiter" ? (
+              <>
+                <li>
+                  <Button
+                    onClick={() => navigate("/admin/companies")}
+                    className="bg-gray-400 hover:bg-gray-500 text-gray-800 font-medium"
+                  >
+                    Companies
+                  </Button>
+                </li>
+                <li>
+                  <Button
+                    onClick={() => navigate("/admin/jobs")}
+                    className="bg-gray-400 hover:bg-gray-500 text-gray-800 font-medium"
+                  >
+                    Jobs
+                  </Button>
+                </li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <Button
+                    onClick={() => navigate("/")}
+                    className="bg-gray-400 hover:bg-gray-500 text-gray-800 font-medium"
+                  >
+                    Home
+                  </Button>
+                </li>
+                <li>
+                  <Button
+                    onClick={() => navigate("/Browse")}
+                    className="bg-gray-400 hover:bg-gray-500 text-gray-800 font-medium"
+                  >
+                    Browse
+                  </Button>
+                </li>
+                <li>
+                  <Button
+                    onClick={() => navigate("/Jobs")}
+                    className="bg-gray-400 hover:bg-gray-500 text-gray-800 font-medium"
+                  >
+                    Jobs
+                  </Button>
+                </li>
+              </>
+            )}
           </ul>
 
+          {/* Right Side User Menu */}
           {!user ? (
             <div className="flex items-center gap-3">
-              <Link to="/login">
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                  Login
-                </Button>
-              </Link>
-              <Link to="/register">
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                  Register
-                </Button>
-              </Link>
+              <Button
+                onClick={() => navigate("/login")}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Login
+              </Button>
+              <Button
+                onClick={() => navigate("/register")}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Register
+              </Button>
             </div>
           ) : (
             <Popover>
               <PopoverTrigger asChild>
                 <Avatar className="cursor-pointer">
-                  <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
-                  />
+                  <AvatarImage src={user?.profile?.profilePhoto} alt="Avatar" />
                   <AvatarFallback>AP</AvatarFallback>
                 </Avatar>
               </PopoverTrigger>
-              <PopoverContent className="w-80">
-                <div className="flex items-center gap-4 space-y-2">
-                  <Avatar className="cursor-pointer">
-                    <AvatarImage
-                      src="https://github.com/shadcn.png"
-                      alt="@shadcn"
-                    />
+
+              <PopoverContent
+                align="end"
+                className="w-56 p-4 shadow-lg rounded-xl border bg-gray-100"
+              >
+                <div className="flex items-center gap-3 pb-3 border-b">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={user?.profile?.profilePhoto} />
                     <AvatarFallback>AP</AvatarFallback>
                   </Avatar>
-                  <div>
-                    <h3 className="font-medium">Avneesh Patel</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Lorem ipsum dolor sit amet consectetur.
+                  <div className="flex flex-col">
+                    <h3 className="font-semibold text-gray-900">
+                      {user?.fullname}
+                    </h3>
+                    <p className="text-xs text-gray-500">
+                      {user?.profile?.bio}
                     </p>
                   </div>
                 </div>
-                <div className="flex flex-col my-2 text-gray-600">
-                  <Link to="/Profile">
-                    <div className="flex w-fit items-center gap-2 cursor-pointer">
-                      <User2 />
-                      <Button variant="link">Profile</Button>
-                    </div>
-                  </Link>
 
-                  <div className="flex w-fit items-center gap-2 cursor-pointer">
-                    <LogOut />
-                    <Button variant="link">Logout</Button>
-                  </div>
+                <div className="flex flex-col gap-2 pt-3 text-gray-700">
+                  {user?.role === "Student" && (
+                    <Button
+                      variant="ghost"
+                      onClick={() => navigate("/Profile")}
+                      className="justify-start"
+                    >
+                      <User2 className="mr-2 w-4 h-4" /> Profile
+                    </Button>
+                  )}
+
+                  <Button
+                    variant="ghost"
+                    onClick={logoutHandler}
+                    className="justify-start"
+                  >
+                    <LogOut className="mr-2 w-4 h-4" /> Logout
+                  </Button>
                 </div>
               </PopoverContent>
             </Popover>
@@ -122,61 +171,116 @@ function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Dropdown Menu */}
+      {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden flex flex-col items-center gap-4 py-4 border-t border-gray-200 bg-gray-100 animate-fadeIn">
-          <ul className="flex flex-col gap-3 font-medium text-gray-700 w-full max-w-[200px]">
-            <li>
-              <Link to={"/"}>
-                <Button className="w-full bg-gray-300 hover:bg-gray-400 text-gray-800">
-                  Home
-                </Button>
-              </Link>
-            </li>
-            <Link to={"/Browse"}>
-              <li>
-                <Button className="w-full bg-gray-300 hover:bg-gray-400 text-gray-800">
-                  Browse
-                </Button>
-              </li>
-            </Link>
-            <li>
-              <Link to={"/Jobs"}>
-                <Button className="w-full bg-gray-300 hover:bg-gray-400 text-gray-800">
-                  Jobs
-                </Button>
-              </Link>
-            </li>
-          </ul>
+        <div className="md:hidden flex flex-col items-center gap-4 py-4 border-t border-gray-200 bg-gray-100 rounded-lg">
+
+          {/* Recruiter menu */}
+          {user && user.role === "Recruiter" && (
+            <>
+              <Button
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate("/admin/companies");
+                }}
+                className="w-32 bg-gray-300 hover:bg-gray-400 text-gray-800"
+              >
+                Companies
+              </Button>
+
+              <Button
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate("/admin/jobs");
+                }}
+                className="w-32 bg-gray-300 hover:bg-gray-400 text-gray-800"
+              >
+                Jobs
+              </Button>
+            </>
+          )}
+
+          {/* Student / normal user menu */}
+          {(!user || user.role === "Student") && (
+            <>
+              <Button
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate("/");
+                }}
+                className="w-32 bg-gray-300 hover:bg-gray-400 text-gray-800"
+              >
+                Home
+              </Button>
+
+              <Button
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate("/Browse");
+                }}
+                className="w-32 bg-gray-300 hover:bg-gray-400 text-gray-800"
+              >
+                Browse
+              </Button>
+
+              <Button
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate("/Jobs");
+                }}
+                className="w-32 bg-gray-300 hover:bg-gray-400 text-gray-800"
+              >
+                Jobs
+              </Button>
+            </>
+          )}
 
           {!user ? (
-            <div className="flex flex-col gap-2 w-full max-w-[200px]">
-              <Link to="/login">
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                  Login
-                </Button>
-              </Link>
-              <Link to="/register">
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                  Register
-                </Button>
-              </Link>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center gap-2">
-              <Avatar>
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
-                <AvatarFallback>AP</AvatarFallback>
-              </Avatar>
-              <Link to="/Profile">
-                <Button variant="link">Profile</Button>
-              </Link>
+            <>
+              <Button
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate("/login");
+                }}
+                className="w-32 bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Login
+              </Button>
 
-              <Button variant="link">Logout</Button>
-            </div>
+              <Button
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate("/register");
+                }}
+                className="w-32 bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Register
+              </Button>
+            </>
+          ) : (
+            <>
+              {user.role === "Student" && (
+                <Button
+                  variant="link"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    navigate("/Profile");
+                  }}
+                >
+                  Profile
+                </Button>
+              )}
+
+              <Button
+                variant="link"
+                onClick={() => {
+                  setMenuOpen(false);
+                  logoutHandler();
+                }}
+              >
+                Logout
+              </Button>
+            </>
           )}
         </div>
       )}

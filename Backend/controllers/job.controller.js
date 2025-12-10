@@ -13,7 +13,6 @@ export const postJob = async (req, res) => {
       position,
       companyId,
     } = req.body;
-    const userId = req.id;
 
     if (
       !title ||
@@ -23,7 +22,7 @@ export const postJob = async (req, res) => {
       !location ||
       !jobType ||
       !experience ||
-      !position ||
+      position === undefined ||
       !companyId
     ) {
       return res.status(400).json({
@@ -31,6 +30,9 @@ export const postJob = async (req, res) => {
         success: false,
       });
     }
+
+    const userId = req.id;
+
     const job = await Job.create({
       title,
       description,
@@ -43,16 +45,18 @@ export const postJob = async (req, res) => {
       company: companyId,
       created_by: userId,
     });
-    res.status(201).json({
-      message: "Job posted successfully.",
+
+    return res.status(201).json({
+      message: "Job posted successfully",
       job,
-      status: true,
+      success: true,
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Server Error", status: false });
+    return res.status(500).json({ message: "Server Error", success: false });
   }
 };
+
 
 //Users
 export const getAllJobs = async (req, res) => {

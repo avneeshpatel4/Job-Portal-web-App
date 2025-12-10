@@ -1,6 +1,15 @@
 import React from "react";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../ui/carousel";
 import { Button } from "../ui/button";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { setSearchedQuery } from "@/redux/jobSlice";
 
 const Category = [
   "Frontend Developer",
@@ -19,28 +28,48 @@ const Category = [
   "Video Editor",
 ];
 
-function Categories() {
+const Categories = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const searchjobHandler = (query) => {
+    dispatch(setSearchedQuery(query));
+    navigate("/browse");
+  };
+
   return (
-    <div>
-        <div>
-            <h1 className="text-2xl font-bold text-center text-blue-600">Categories</h1>
-            <p className="text-center text-gray-600">Explore our extensive job market</p>
-        </div>
-      <Carousel className="w-full max-w-xl mx-auto my-5 ">
+    <div className="px-4 my-10">
+      <div className="text-center mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-blue-600">
+          Categories
+        </h1>
+        <p className="text-gray-600 text-sm sm:text-base">
+          Explore our extensive job market.
+        </p>
+      </div>
+
+      <Carousel className="w-full max-w-2xl mx-auto">
         <CarouselContent>
-          {Category.map((category, index) => {
-            return (
-              <CarouselItem className="md:basis-1/2 lg:basis-1/3 text-center">
-                <Button key={index}>{category}</Button>
-              </CarouselItem>
-            );
-          })}
+          {Category.map((category, index) => (
+            <CarouselItem
+              key={index}
+              className="basis-3/4 sm:basis-1/2 lg:basis-1/3 px-2"
+            >
+              <Button
+                onClick={() => searchjobHandler(category)}
+                className="w-full py-3 text-sm sm:text-base font-semibold rounded-xl shadow-md hover:shadow-lg transition-all"
+              >
+                {category}
+              </Button>
+            </CarouselItem>
+          ))}
         </CarouselContent>
-        <CarouselPrevious className="sm:mx-48 md:mx-1"/>
-        <CarouselNext className="sm:mx-48 md:mx-1"/>
+
+        <CarouselPrevious className="hidden sm:flex" />
+        <CarouselNext className="hidden sm:flex" />
       </Carousel>
     </div>
   );
-}
+};
 
 export default Categories;

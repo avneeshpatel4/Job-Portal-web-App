@@ -1,26 +1,43 @@
-import React from 'react'
-import Navbar from './Navbar'
-import Job1 from './Job1';
+import React, { useEffect } from "react";
+import Navbar from "./Navbar";
+import Job1 from "./Job1";
+import { useDispatch, useSelector } from "react-redux";
+import { setSearchedQuery } from "@/redux/jobSlice";
+import useGetAllJobs from "@/hooks/useGetAllJobs";
 
-const randomJobs  = [1,2,3,4,5,6,7,8,9];
+const Browse = () => {
+  useGetAllJobs();
+  const { allJobs } = useSelector((store) => store.jobs);
+  const dispatch = useDispatch();
 
-function Browse() {
+  useEffect(() => {
+    return () => {
+      dispatch(setSearchedQuery(""));
+    };
+  }, []);
+
   return (
-    <div>
-      <Navbar/>
-      <div className='max-w-7xl mx-auto gap-2'>
-        <h1 className='font-bold my-10  text-xl'>Search Result {randomJobs.length}</h1>
-         <div className='grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1
-         gap-4 mt-5'>
-              {
-          randomJobs.map((index,item)=>{
-            return <Job1/>
-          })
-        }
-         </div>
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 my-10">
+        <h1 className="font-bold text-xl sm:text-2xl mb-6">
+          Search Results ({allJobs.length})
+        </h1>
+
+        {/* Responsive Grid */}
+        <div className="grid 
+            grid-cols-1 
+            sm:grid-cols-2 
+            lg:grid-cols-3 
+            gap-4 md:gap-6">
+          {allJobs.map((job) => (
+            <Job1 key={job._id} job={job} />
+          ))}
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Browse
+export default Browse;

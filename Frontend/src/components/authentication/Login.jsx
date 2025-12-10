@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components_lite/Navbar";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Link, useNavigate } from "react-router-dom";
-import { USER_API_ENDPOINT } from "../../../utils/data";
+import { USER_API_ENDPOINT } from "../../utils/data";
 import { toast } from "sonner";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,7 +20,7 @@ function Login() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading } = useSelector((store) => store.auth);
+  const { loading,user } = useSelector((store) => store.auth);
 
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -51,9 +51,14 @@ function Login() {
       dispatch(setloading(false));
     }
   };
+  useEffect(()=>{
+    if (user){
+      navigate("/")
+    }
+  },[])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-300">
       {/* Uncomment Navbar if needed */}
       {/* <Navbar /> */}
 
@@ -64,7 +69,7 @@ function Login() {
 
         <form
           onSubmit={submitHandler}
-          className="w-full max-w-md sm:max-w-lg bg-white border border-gray-200 shadow-lg rounded-lg p-6 sm:p-8"
+          className="w-full max-w-md sm:max-w-lg bg-gray-100 border border-gray-900 shadow-lg rounded-lg p-6 sm:p-8"
         >
           <h2 className="text-2xl sm:text-3xl font-semibold text-center text-blue-600 mb-6">
             Login
@@ -80,6 +85,7 @@ function Login() {
               onChange={changeEventHandler}
               placeholder="Enter your email"
               required
+              className="border border-gray-500"
             />
           </div>
 
@@ -93,6 +99,8 @@ function Login() {
               onChange={changeEventHandler}
               placeholder="Enter your password"
               required
+              className="border border-gray-500"
+
             />
           </div>
 
