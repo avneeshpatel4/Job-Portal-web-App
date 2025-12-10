@@ -22,8 +22,7 @@ function Register() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading,user } = useSelector((store) => store.auth);
-
+  const { loading, user } = useSelector((store) => store.auth);
 
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -35,6 +34,7 @@ function Register() {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
     const formData = new FormData();
     formData.append("fullname", input.fullname);
     formData.append("email", input.email);
@@ -45,33 +45,29 @@ function Register() {
 
     try {
       dispatch(setloading(true));
+
       const res = await axios.post(`${USER_API_ENDPOINT}/register`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
+
       if (res.data.success) {
         navigate("/login");
         toast.success(res.data.message);
       }
     } catch (error) {
-      const errorMessage = error.response
-        ? error.response.data.message
-        : "An unexpected error occurred";
-      toast.error(errorMessage);
+      toast.error(error.response?.data?.message || "Something went wrong");
     } finally {
       dispatch(setloading(false));
     }
   };
-   useEffect(()=>{
-      if (user){
-        navigate("/")
-      }
-    },[])
+
+  useEffect(() => {
+    if (user) navigate("/");
+  }, []);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 bg-gray-300">
-      {/* <Navbar /> */}
-
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 bg-gray-300">
       <div className="w-full max-w-3xl text-center mt-10">
         <h1 className="text-2xl sm:text-3xl md:text-4xl text-blue-600 font-bold">
           Find Your Dream Job...
@@ -80,9 +76,9 @@ function Register() {
 
       <form
         onSubmit={submitHandler}
-        className="w-full sm:w-[90%] md:w-2/3 lg:w-1/2 border border-gray-800 rounded-lg p-5 sm:p-6 md:p-8 my-4 shadow-sm bg-gray-100"
+        className="w-full max-w-md sm:max-w-lg md:max-w-xl bg-gray-100 border border-gray-800 rounded-lg p-5 sm:p-7 md:p-8 mt-6 shadow-lg"
       >
-        <h1 className="font-bold text-xl sm:text-2xl text-center text-blue-600">
+        <h1 className="font-bold text-2xl text-center text-blue-600 mb-3">
           Register
         </h1>
 
@@ -95,8 +91,7 @@ function Register() {
             value={input.fullname}
             onChange={changeEventHandler}
             placeholder="Enter your full name"
-              className="border border-gray-500"
-
+            className="border border-gray-500"
           />
         </div>
 
@@ -109,8 +104,7 @@ function Register() {
             value={input.email}
             onChange={changeEventHandler}
             placeholder="Enter your email"
-              className="border border-gray-500"
-
+            className="border border-gray-500"
           />
         </div>
 
@@ -123,8 +117,7 @@ function Register() {
             value={input.password}
             onChange={changeEventHandler}
             placeholder="Enter your password"
-              className="border border-gray-500"
-
+            className="border border-gray-500"
           />
         </div>
 
@@ -137,8 +130,7 @@ function Register() {
             value={input.phoneNumber}
             onChange={changeEventHandler}
             placeholder="Enter your phone number"
-              className="border border-gray-500"
-
+            className="border border-gray-500"
           />
         </div>
 
@@ -146,7 +138,7 @@ function Register() {
         <div className="my-3">
           <Label>Role</Label>
           <RadioGroup className="flex flex-col sm:flex-row gap-4 mt-2">
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-2 text-sm sm:text-base">
               <Input
                 type="radio"
                 name="role"
@@ -154,11 +146,11 @@ function Register() {
                 checked={input.role === "Student"}
                 onChange={changeEventHandler}
                 className="cursor-pointer"
-                
               />
               Student
             </label>
-            <label className="flex items-center gap-2">
+
+            <label className="flex items-center gap-2 text-sm sm:text-base">
               <Input
                 type="radio"
                 name="role"
@@ -191,7 +183,7 @@ function Register() {
         ) : (
           <button
             type="submit"
-            className="w-full py-2 text-white bg-blue-600 hover:bg-blue-800 rounded-md transition-all duration-200"
+            className="w-full py-2 text-white bg-blue-600 hover:bg-blue-800 rounded-md text-base sm:text-lg transition-all duration-200"
           >
             Register
           </button>
