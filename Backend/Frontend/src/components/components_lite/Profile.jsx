@@ -8,7 +8,7 @@ import { Label } from "../ui/label";
 import AppliedJob from "./AppliedJob";
 import EditProfileModal from "./EditProfileModal";
 import { useSelector } from "react-redux";
-import useGetAppliedJobs from "@/hooks/usegetAllAppliedJob";
+import useGetAppliedJobs from "@/hooks/useGetAllAppliedJob";
 
 function Profile() {
   useGetAppliedJobs()
