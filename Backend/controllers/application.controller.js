@@ -95,7 +95,7 @@ export const updateStatus = async (req, res) => {
         message: "status is required",
         success: false,
       });
-    }
+    };
 
     // find the application by applicantion id
     const application = await Application.findOne({ _id: applicationId });
