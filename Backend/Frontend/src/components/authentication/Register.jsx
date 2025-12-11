@@ -137,7 +137,7 @@ function Register() {
         {/* Role */}
         <div className="my-3">
           <Label>Role</Label>
-          <RadioGroup className="flex flex-col sm:flex-row gap-4 mt-2">
+          <RadioGroup className="flex flex-col gap-4 mt-2">
             <label className="flex items-center gap-2 text-sm sm:text-base">
               <Input
                 type="radio"
